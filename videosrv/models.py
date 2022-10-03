@@ -9,6 +9,10 @@ class Profile(models.Model):
     subscriptions = models.ManyToManyField('self', symmetrical=False, related_name='signed_users')
     ignored_users = models.ManyToManyField('self', symmetrical=False, related_name='banned_users')
 
+    class Meta:
+        verbose_name = 'profile'
+        verbose_name_plural = 'profiles'
+
     def __str__(self):
         return self.user.username
 
@@ -20,6 +24,10 @@ class Video(models.Model):
     header = models.CharField(max_length=255)
     description = models.TextField()
 
+    class Meta:
+        verbose_name = 'video'
+        verbose_name_plural = 'videos'
+
     def __str__(self):
         return self.header
 
@@ -30,6 +38,10 @@ class Comment(models.Model):
     text = models.CharField(max_length=512)
     date_added = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = 'comment'
+        verbose_name_plural = 'comments'
+
     def __str__(self):
         return self.author.user.username + ": " + self.text
 
@@ -38,6 +50,11 @@ class Like(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'like'
+        verbose_name_plural = 'likes'
+        constraints = [models.UniqueConstraint(fields=['video', 'user'], name='unique_like')]
 
     def __str__(self):
         return self.user.user.username + " liked " + self.video.header
