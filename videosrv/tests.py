@@ -1,6 +1,7 @@
 from django.test import TestCase
 from videosrv.models import Profile, Video, Comment, Like
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
 
 
 # Create your tests here.
@@ -58,3 +59,37 @@ class ModelsTestCase(TestCase):
 
         like1 = Like.objects.create(video=video1, user=user1_profile)
         like2 = Like.objects.create(video=video2, user=user2_profile)
+
+    def test_subscriptions(self):
+        user1 = User.objects.get(username='user1')
+        user2 = User.objects.get(username='user2')
+
+        user1_profile = Profile.objects.create(user=user1)
+        user2_profile = Profile.objects.create(user=user2)
+
+        user1_profile.subscriptions.add(user2_profile)
+        self.assertEqual(user1_profile.subscriptions.count(), 1)
+
+    def test_ignore(self):
+        user1 = User.objects.get(username='user1')
+        user2 = User.objects.get(username='user2')
+
+        user1_profile = Profile.objects.create(user=user1)
+        user2_profile = Profile.objects.create(user=user2)
+
+        user1_profile.ignored_users.add(user2_profile)
+
+        self.assertEqual(user1_profile.ignored_users.count(), 1)
+
+    def test_unique_like(self):
+        user1 = User.objects.get(username='user1')
+        user2 = User.objects.get(username='user2')
+
+        user1_profile = Profile.objects.create(user=user1)
+        user2_profile = Profile.objects.create(user=user2)
+
+        video1 = Video.objects.create(author=user1_profile, header='video1', description='video1 description')
+
+        like1 = Like.objects.create(video=video1, user=user1_profile)
+        with self.assertRaises(IntegrityError):
+            like2 = Like.objects.create(video=video1, user=user1_profile)
