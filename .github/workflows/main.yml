@@ -3,14 +3,23 @@ on: [pull_request, push] # activates the workflow when there is a push or pull r
 jobs:
   test_project:
     runs-on: ubuntu-latest # operating system your code will run on
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: videosrvuser
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: videosrv
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: pip install flake8
       - run: pip install -r requirements.txt # install all our dependencies for the project
-      - uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: '11'
       - name: Run migrations
         run: python manage.py migrate
       - run: python3 ./manage.py test
