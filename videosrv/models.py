@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    subscriptions = models.ManyToManyField('self', symmetrical=False, related_name='signed_users')
-    ignored_users = models.ManyToManyField('self', symmetrical=False, related_name='banned_users')
+    subscriptions = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='signed_users')
+    ignored_users = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='banned_users')
 
     class Meta:
         verbose_name = 'profile'
@@ -30,6 +30,9 @@ class Video(models.Model):
 
     def __str__(self):
         return self.header
+
+    def get_likes_count(self):
+        return Like.objects.filter(video=self).count()
 
 
 class Comment(models.Model):
