@@ -6,6 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from .models import Profile, Video, Comment, Like
 from .serializers import ProfileSerializer, VideoSerializer, CommentSerializer, LikeSerializer
 
@@ -24,7 +26,9 @@ class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
     permission_classes = [IsOwnerStuffOrReadOnly]
-
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['author', ]
+    search_fields = ['header', 'description']
 
 class VideoByUserViewSet(viewsets.ModelViewSet):
     serializer_class = VideoSerializer
