@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,6 +74,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'graduateWork.wsgi.application'
+
+ASGI_APPLICATION = "graduateWork.asgi.application"
 
 
 # Database
