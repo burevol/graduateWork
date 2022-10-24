@@ -87,17 +87,6 @@ class MessengerConsumer(AsyncWebsocketConsumer):
                     'type': 'user_join',
                     'user': self.username
                 })
-        elif command == 'change_username':
-            await self.channel_layer.group_discard(
-                self.user_inbox,
-                self.channel_name
-            )
-            self.username = message
-            self.user_inbox = f'inbox_{self.username}'
-            await self.channel_layer.group_add(
-                self.user_inbox,
-                self.channel_name
-            )
 
     async def leave_room(self):
         """Leave current room"""
@@ -132,4 +121,4 @@ class MessengerConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_user_name(self, user_id):
-        return Profile.objects.get(id=int(user_id)).user.username*username
+        return Profile.objects.get(id=int(user_id)).user.username.username
