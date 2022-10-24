@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/asgi/
 
 import os
 
-from channels.routing import ProtocolTypeRouter
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
+
+from messenger.routing import websocket_urlpatterns
+from messenger.token_auth import TokenAuthMiddlewareStack
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'graduateWork.settings')
 
@@ -18,5 +21,6 @@ django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    # Just HTTP for now. (We can add other protocols later.)
+    'websocket': TokenAuthMiddlewareStack(
+        URLRouter(websocket_urlpatterns))
 })
