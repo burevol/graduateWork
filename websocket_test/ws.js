@@ -10,6 +10,11 @@ function connect()
 
     chatSocket.onopen = function () {
         console.log('Successfully connected to the WebSocket.')
+        chatSocket.send(JSON.stringify({
+            'command': 'ping',
+            'message': 'ping',
+
+        }));
     }
 
     chatSocket.onclose = function () {
@@ -24,6 +29,9 @@ function connect()
         const data = JSON.parse(e.data);
         switch (data.type) {
             case "chat_message":
+                console.log(`${data.user}: ${data.message}`);
+                break;
+            case "pong":
                 console.log(`${data.user}: ${data.message}`);
                 break;
             default:
