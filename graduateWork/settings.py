@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'drf_yasg',
+    'webpush',
     'videosrv',
     'messenger',
 ]
@@ -169,3 +170,9 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'notification@silicon-chronicles.ru'
 EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": env('VAPID_PUBLIC_KEY'),
+    "VAPID_PRIVATE_KEY": env('VAPID_PRIVATE_KEY'),
+    "VAPID_ADMIN_EMAIL": "notification@silicon-chronicles.ru"
+}
