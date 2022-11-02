@@ -6,6 +6,7 @@
 .idea
 uploads
 websocket_test/node_modules
+graduateWork/.env
 
 # Generated files
 .idea/**/contentModel.xml
