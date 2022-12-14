@@ -176,3 +176,6 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": env('VAPID_PRIVATE_KEY'),
     "VAPID_ADMIN_EMAIL": "notification@silicon-chronicles.ru"
 }
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
