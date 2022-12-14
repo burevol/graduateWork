@@ -1,0 +1,76 @@
+{
+  "videos": [
+    {
+      "id": 1,
+      "header": "Видео 1",
+      "author": "User1",
+      "preview": "./Pict1.png",
+      "date": "22.11.2022",
+      "link": "./sample-5s.mp4",
+      "likes": "1"
+    },
+    {
+      "id": 2,
+      "header": "Видео 2",
+      "author": "User2",
+      "preview": "./Pict2.png",
+      "date": "22.11.2022",
+      "link": "./sample-10s.mp4",
+      "likes": "12"
+    },
+    {
+      "id": 3,
+      "header": "Видео 3",
+      "author": "User3",
+      "preview": "./Pict3.png",
+      "date": "22.11.2022",
+      "link": "./sample-15s.mp4",
+      "likes": "123"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "author": "User1",
+      "body": "some comment 1",
+      "videoId": 1
+    },
+    {
+      "id": 2,
+      "author": "User2",
+      "body": "some comment 2",
+      "videoId": 1
+    },
+    {
+      "id": 3,
+      "author": "User2",
+      "body": "some comment 3",
+      "videoId": 2
+    },
+    {
+      "id": 4,
+      "author": "User2",
+      "body": "some comment 4",
+      "videoId": 3
+    }
+  ],
+  "users": [
+    {
+      "username": "User1",
+      "img": "/avatar.png"
+    },
+    {
+      "username": "User2",
+      "img": "/avatar2.png"
+    },
+    {
+      "username": "User3",
+      "img": "/avatar3.jfif"
+    }
+  ],
+
+  "profile": {
+    "username": "User1",
+    "img": "/avatar.png"
+  }
+}
