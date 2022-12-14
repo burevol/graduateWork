@@ -25,8 +25,8 @@ export default videoSlice.reducer
 
 export const fetchVideo = () => async dispatch => {
     try {
-        await api.get('/videos')
-            .then((responce) => dispatch(videoSuccess(responce.data)))
+        await api.get('/api/video')
+            .then((response) => dispatch(videoSuccess(response.data)))
     }
     catch (e) {
         return console.error(e.message);
