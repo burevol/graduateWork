@@ -1,5 +1,12 @@
+from os import path
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
+
+
+def uuid_path(_, filename):
+    return 'uploads/' + str(uuid.uuid4()) + path.splitext(filename)[1]
 
 
 # Create your models here.
@@ -18,7 +25,8 @@ class Profile(models.Model):
 
 
 class Video(models.Model):
-    upload = models.FileField(upload_to='uploads/')
+    upload = models.FileField(upload_to=uuid_path)
+    preview = models.FileField(upload_to=uuid_path, blank=True)
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
     header = models.CharField(max_length=255)
