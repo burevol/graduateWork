@@ -13,6 +13,7 @@ def uuid_path(_, filename):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.FileField(upload_to=uuid_path, blank=True)
     subscriptions = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='signed_users')
     ignored_users = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='banned_users')
 

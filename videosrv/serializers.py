@@ -13,7 +13,7 @@ class VideoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Video
-        fields = ['id', 'upload', 'author', 'date_added', 'header', 'description', 'likes_count']
+        fields = ['id', 'upload', 'preview', 'author', 'date_added', 'header', 'description', 'likes_count']
 
     def get_likes_count(self, obj):
         return obj.get_likes_count()
