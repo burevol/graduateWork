@@ -11,9 +11,7 @@ function VideoPage() {
     const inputRef = useRef(null);
     const params = useParams();
     const videos = useSelector((state) => state.storageData.videos.videos);
-    console.log(videos)
     const item = videos.find(video => video.id === parseInt(params.id));
-    console.log(item)
 
     const comments = useSelector((state) => state.storageData.comments.comments);
     const dispatch = useDispatch();
@@ -36,7 +34,7 @@ function VideoPage() {
             {
                 <div>
                     <video autoPlay controls>
-                        <source src={item.link} type="video/mp4" />
+                        <source src={item.upload} type="video/mp4" />
                     </video>
                     <VideoInfo info={item} />
                     <div className="container mx-auto px-3">

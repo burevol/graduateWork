@@ -30,7 +30,7 @@ function VideoInfo(props) {
                 {props.info.author}
             </p>
             <p className="font-normal text-gray-700 dark:text-gray-400">
-                {props.info.date}
+                {props.info.date_added}
             </p>
         </div >
     );
