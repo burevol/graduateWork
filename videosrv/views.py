@@ -5,6 +5,7 @@ from rest_framework import permissions
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import RetrieveAPIView
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -29,6 +30,7 @@ class VideoViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['author', ]
     search_fields = ['header', 'description']
+
 
 class VideoByUserViewSet(viewsets.ModelViewSet):
     serializer_class = VideoSerializer
@@ -84,3 +86,8 @@ class LikeView(APIView):
                 return Response('Like successfully added', status=status.HTTP_201_CREATED)
             else:
                 return Response("Video not found", status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileView(RetrieveAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer

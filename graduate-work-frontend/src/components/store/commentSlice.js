@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { api } from '../api/user_api'
+import { api } from '../api/main_api'
 
 export const commentSlice = createSlice({
     name: 'commentData',

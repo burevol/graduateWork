@@ -1,11 +1,20 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Profile, Video, Comment, Like
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email')
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=True)
+
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'subscription', 'ignored_users']
+        fields = ['id', 'user', 'avatar']
 
 
 class VideoSerializer(serializers.ModelSerializer):

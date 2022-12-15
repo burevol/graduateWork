@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import VideoViewSet, VideoByUserViewSet, SubscriptionsViewSet, CommentsViewSet
+from .views import VideoViewSet, VideoByUserViewSet, SubscriptionsViewSet, CommentsViewSet, ProfileView
 
 router = routers.DefaultRouter()
 router.register(r'video', VideoViewSet)
@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('api/auth-token/', obtain_auth_token, name='rest_auth_token'),
+    path('api/user/<int:pk>', ProfileView.as_view(), name='user')
 ]
