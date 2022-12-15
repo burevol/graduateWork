@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
+from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
+
 
 from .views import VideoViewSet, VideoByUserViewSet, SubscriptionsViewSet, CommentsViewSet, ProfileView
 
@@ -12,7 +13,8 @@ router.register(r'comments', CommentsViewSet, basename='comments')
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/auth-token/', obtain_auth_token, name='rest_auth_token'),
-    path('api/user/<int:pk>', ProfileView.as_view(), name='user')
+    path('api/user/<int:pk>', ProfileView.as_view(), name='user'),
+    path('password-reset/', PasswordResetView.as_view()),
+    path('password-reset-confirm/<uidb64>/<token>/',
+         PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 ]

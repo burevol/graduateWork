@@ -5,6 +5,8 @@ import userSlice from "./userSlice";
 import userDataSlice from './userDataSlice';
 import messagesSlice from './messages';
 import userListSlice from './userListSlice';
+import authReducer from "./auth";
+import messageReducer from "./message";
 
 const reducer = combineReducers({
     comments: commentSlice,
@@ -13,6 +15,8 @@ const reducer = combineReducers({
     profileData: userDataSlice,
     messages: messagesSlice,
     userList: userListSlice,
+    auth: authReducer,
+    message: messageReducer,
 });
 
 export default reducer;

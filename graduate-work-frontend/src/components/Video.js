@@ -1,4 +1,3 @@
-import React from "react";
 import VideoInfo from "./VideoInfo";
 import { useNavigate } from 'react-router-dom';
 

@@ -18,17 +18,19 @@ from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import permissions
+from dj_rest_auth.registration.views import RegisterView, VerifyEmailView, ConfirmEmailView
+from dj_rest_auth.views import LoginView, LogoutView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="VideoSRV API",
-      default_version='v1',
-      description="Test description"
-   ),
-   public=True,
-   permission_classes=[permissions.AllowAny],
+    openapi.Info(
+        title="VideoSRV API",
+        default_version='v1',
+        description="Test description"
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
 )
 
 urlpatterns = [
@@ -37,6 +39,16 @@ urlpatterns = [
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('webpush/', include('webpush.urls')),
+    path('account-confirm-email/<str:key>/', ConfirmEmailView.as_view()),
+    path('register/', RegisterView.as_view()),
+    path('login/', LoginView.as_view()),
+    path('logout/', LogoutView.as_view()),
+    path('verify-email/',
+         VerifyEmailView.as_view(), name='rest_verify_email'),
+    path('account-confirm-email/',
+         VerifyEmailView.as_view(), name='account_email_verification_sent'),
+    re_path(r'^account-confirm-email/(?P<key>[-:\w]+)/$',
+            VerifyEmailView.as_view(), name='account_confirm_email'),
     path('', include('videosrv.urls'))
 ]
 
