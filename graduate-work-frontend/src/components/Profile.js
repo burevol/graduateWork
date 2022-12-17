@@ -2,10 +2,14 @@ import { useEffect } from 'react';
 import { Card, Button } from "flowbite-react";
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import Navigation from './Navbar'
 import { fetchProfile } from "./store/userDataSlice";
 
 function Profile() {
+
+    const { user: currentUser } = useSelector((state) => state.storageData.auth);
+    const img = useSelector((state) => state.storageData.profileData.img)
+    const username = useSelector((state) => state.storageData.profileData.username)
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -17,23 +21,22 @@ function Profile() {
         })
     }
     const params = useParams();
+    const profileId = params.user ? params.user : currentUser.profile_id
 
     useEffect(() => {
-        dispatch(fetchProfile(params.user));
-    }, [dispatch, params.user]);
+        dispatch(fetchProfile(profileId));
+    }, [dispatch, profileId]);
 
-    const img = useSelector((state) => state.storageData.profileData.img)
-    const username = useSelector((state) => state.storageData.profileData.username)
-    const currentUser = useSelector((state) => state.storageData.users.username)
+
 
     const userVideoButton = <div>
-        <Button className='w-48' onClick={() => { showVideoByUser(params.user) }}>
+        <Button className='w-48' onClick={() => { showVideoByUser(profileId) }}>
             Видео пользователя
         </Button>
     </div>;
 
     const SubscribeButton = <div>
-        <Link to={`/subscribe/${username}`}>
+        <Link to={`/subscribe/${profileId}`}>
             <Button className='w-48'>
                 Подписаться
             </Button>
@@ -57,7 +60,7 @@ function Profile() {
     </div>
 
     const chatButton = <div>
-        <Link to={`/chat/${username}`}>
+        <Link to={`/chat/${profileId}`}>
             <Button className='w-48'>
                 Чат с пользователем
             </Button>
@@ -74,7 +77,6 @@ function Profile() {
 
     return (
         <div>
-            <Navigation />
             <div className="flex gap-2 p-2">
                 <div className="max-w-md">
                     <Card imgSrc={img}>
@@ -86,11 +88,11 @@ function Profile() {
                 <div>
                     <div className="flex flex-col gap-2 btn-group">
                         {userVideoButton}
-                        {currentUser === params.user ? uploadVideoButton : ""}
-                        {currentUser === params.user ? ViewSubscribeButton : ""}
-                        {currentUser !== params.user ? chatButton : ""}
-                        {currentUser !== params.user ? SubscribeButton : ""}
-                        {currentUser === params.user ? logoutButton : ""}
+                        {currentUser.profile_id === profileId ? uploadVideoButton : ""}
+                        {currentUser.profile_id === profileId ? ViewSubscribeButton : ""}
+                        {currentUser.profile_id !== profileId ? chatButton : ""}
+                        {currentUser.profile_id !== profileId ? SubscribeButton : ""}
+                        {currentUser.profile_id === profileId ? logoutButton : ""}
                     </div>
                 </div>
             </div>

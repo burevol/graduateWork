@@ -17,9 +17,6 @@ const login = (username, password) => {
             password,
         })
         .then((response) => {
-            if (response.data.access_token) {
-                localStorage.setItem("user", JSON.stringify(response.data));
-            }
 
             return response.data;
         });
@@ -27,12 +24,24 @@ const login = (username, password) => {
 
 const logout = () => {
     localStorage.removeItem("user");
+    return axios.post(API_URL + "logout/",).then((response) => {
+
+        return response.data;
+    })
+
+};
+
+const userToProfile = (id) => {
+    return axios.get(API_URL + `api/usertoprofile?user_id=${id}`,).then((response) => {
+        return response.data;
+    })
 };
 
 const authService = {
     register,
     login,
     logout,
+    userToProfile
 };
 
 export default authService;

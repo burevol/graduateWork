@@ -1,18 +1,26 @@
+import {useState} from "react";
 import {Navbar, Button} from "flowbite-react";
-import { useNavigate } from 'react-router-dom';
-import {useSelector} from 'react-redux'
+import {useNavigate} from 'react-router-dom';
+import {useSelector, useDispatch} from 'react-redux'
 import SearchField from "./search"
 import AvatarField from "./Avatar";
+import { logout } from "./store/auth";
 
 export default function Navigation() {
 
     const {user: currentUser} = useSelector((state) => state.storageData.auth);
+    const [isOpen, setStateOpen] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    function doLogin() {
-        navigate({
-            pathname: '/login',
-        })
+    function doLogout() {
+        setStateOpen(false)
+        dispatch(logout());
+        navigate("/")
+    }
+
+    function toggleMenu() {
+        setStateOpen(!isOpen);
     }
 
     return (
@@ -28,14 +36,51 @@ export default function Navigation() {
                     alt="VideoSRV Logo"
                 />
                 <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-          VideoSRV
-        </span>
+                    VideoSRV
+                </span>
             </Navbar.Brand>
             <SearchField></SearchField>
-            {
-                (currentUser) ? <AvatarField user={currentUser}></AvatarField> :
-                    <Button onClick={doLogin}>Login</Button>
-            }
+            <div className="relative">
+                <button
+                    onClick={toggleMenu}
+                >
+                    { currentUser ? <AvatarField userId={currentUser.profile_id}/> : <AvatarField userId={null}/> }
+                </button>
+                 <button
+                        className={
+                            isOpen ? (
+                                ' cursor-default bg-black opacity-50 fixed inset-0 w-full h-full'
+                            ) : (
+                                'hidden'
+                            )
+                        }
+                        onClick={() => {setStateOpen(false)}}
+                        tabIndex="-1"
+                    />
+                <div
+                    className={
+                        isOpen ? (
+                            'absolute right-0 mt-2 w-48 bg-white rounded-lg py-2 shadow-xl'
+                        ) : (
+                            'hidden'
+                        )
+                    }
+                >
+
+                    {currentUser ? <a href="/profile" className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
+                        Профиль
+                    </a> : "" }
+                    {!currentUser ? <a href="/login" className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
+                        Вход
+                    </a> : ""}
+                    {!currentUser ? <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
+                        Регистрация
+                    </a> : "" }
+                    {currentUser ? <a className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white" onClick={doLogout}>
+                        Выход
+                    </a> : "" }
+                </div>
+            </div>
         </Navbar>
 
     )

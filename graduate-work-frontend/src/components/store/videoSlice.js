@@ -12,7 +12,7 @@ export const videoSlice = createSlice({
         },
         like: (state, action) => {
             const item = state.videos.find(video => video.id === action.payload)
-            item.likes++;
+            item.likes_count++;
         }
     },
 });

@@ -17,7 +17,7 @@ function VideoList(props) {
             <Video key={videoCard.id} info={videoCard} />
         )
         :
-        videos.filter(video => video.author === props.user).map((videoCard) =>
+        videos.filter(video => video.author.id === parseInt(props.user)).map((videoCard) =>
             <Video key={videoCard.id} info={videoCard} />
         ));
 

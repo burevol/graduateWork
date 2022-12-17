@@ -9,9 +9,8 @@ export const profileSlice = createSlice({
     },
     reducers: {
         profileSuccess: (state, action) => {
-            ({ username: state.username, img: state.img } = action.payload[0])
+            ({ user: {username: state.username}, avatar: state.img } = action.payload)
             state.isLoading = false;
-            console.log(state.username)
         },
     },
 });
@@ -20,9 +19,9 @@ const { profileSuccess } = profileSlice.actions
 
 export default profileSlice.reducer
 
-export const fetchProfile = (user) => async dispatch => {
+export const fetchProfile = (userId) => async dispatch => {
     try {
-        await api.get(`/users?username=${user}`)
+        await api.get(`/api/user/${userId}`)
             .then((response) => dispatch(profileSuccess(response.data)))
     }
     catch (e) {

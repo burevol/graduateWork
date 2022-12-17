@@ -30,6 +30,11 @@ export const login = createAsyncThunk(
     async ({username, password}, thunkAPI) => {
         try {
             const data = await AuthService.login(username, password);
+            const profileId = await AuthService.userToProfile(data.user.pk)
+            data.profile_id = profileId
+            if (data.access_token) {
+                localStorage.setItem("user", JSON.stringify(data));
+            }
             return {user: data};
         } catch (error) {
             const message =
@@ -44,8 +49,10 @@ export const login = createAsyncThunk(
     }
 );
 
-export const logout = createAsyncThunk("auth/logout", async () => {
-    await AuthService.logout();
+export const logout = createAsyncThunk(
+    "auth/logout",
+    async () => {
+        await AuthService.logout();
 });
 
 const initialState = user

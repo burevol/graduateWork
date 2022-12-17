@@ -1,5 +1,4 @@
 import { useSearchParams } from "react-router-dom";
-import Navigation from './Navbar'
 import VideoList from './VideoList';
 
 function Main() {
@@ -9,7 +8,6 @@ function Main() {
     const search = searchParams.get('search')
     return (
         <div>
-            <Navigation />
             <VideoList user={user} search={search} />
         </div>
     );

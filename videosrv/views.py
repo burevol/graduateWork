@@ -91,3 +91,16 @@ class LikeView(APIView):
 class ProfileView(RetrieveAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+
+
+class UserToProfile(APIView):
+    def get(self, request):
+        user_id = self.request.query_params.get('user_id')
+        if user_id is not None:
+            try:
+                id = Response(str(Profile.objects.get(user_id=user_id).id), status=status.HTTP_200_OK)
+            except ObjectDoesNotExist:
+                return Response("Profile not found", status=status.HTTP_400_BAD_REQUEST)
+            return id
+        else:
+            return Response("Profile not found", status=status.HTTP_400_BAD_REQUEST)

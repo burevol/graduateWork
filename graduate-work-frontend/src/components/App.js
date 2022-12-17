@@ -1,24 +1,18 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Routes, Route} from 'react-router-dom';
-import {useDispatch} from 'react-redux'
 import Main from "./Main";
 import Profile from './Profile';
 import VideoPage from "./VideoPage";
 import UploadForm from "./UploadForm";
 import Chat from "./Chat";
 import Login from "./Login";
-import {fetchProfile} from "./store/userSlice";
-import {fetchUsers} from './store/userListSlice';
+import Navigation from "./Navbar";
+
 
 function App() {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(fetchProfile());
-        dispatch(fetchUsers());
-    }, [dispatch]);
-
     return (
         <div>
+           <Navigation/>
             <Routes>
                 <Route path="/" element={<Main/>}/>
                 <Route path='/profile' element={<Profile/>}/>

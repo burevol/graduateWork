@@ -1,38 +1,34 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom';
-import { Avatar } from "flowbite-react";
-import { api } from './api/main_api'
+import {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
+import {Avatar} from "flowbite-react";
+import {api} from './api/main_api'
 
-function AvatarField({ user }) {
+function AvatarField({userId}) {
 
-    const currentUser = useSelector((state) => state.storageData.users.username)
     const [img, setImg] = useState('');
 
     useEffect(() => {
-        try {
-            api.get(`/users?username=${user}`)
-                .then((response) => {
-                    if (user === '') {
-                        setImg("")
-                    } else {
-                        setImg(response.data[0].img)
-                    }
-
-                })
+        if (userId) {
+            try {
+                api.get(`/api/user/${userId}`)
+                    .then((response) => {
+                        setImg(response.data.avatar)
+                    })
+            } catch (e) {
+                return console.error(e.message);
+            }
+        } else {
+            setImg("")
         }
-        catch (e) {
-            return console.error(e.message);
-        }
-    }, [currentUser, user]);
+    }, [userId]);
 
     return (<div className="flex flex-wrap gap-2">
-        <Link to={`/user/${user}`}>
-            <Avatar
-                img={img}
-                rounded={true}
-            />
-        </Link>
+        {/* <Link to={`/user/${user}`}> */}
+        <Avatar
+            img={img}
+            rounded={true}
+        />
+        {/*</Link>*/}
     </div>)
 }
 

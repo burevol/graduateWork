@@ -19,6 +19,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class VideoSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
+    author = ProfileSerializer()
 
     class Meta:
         model = Video
