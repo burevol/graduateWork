@@ -73,7 +73,7 @@ export default function Navigation() {
                     {!currentUser ? <a href="/login" className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
                         Вход
                     </a> : ""}
-                    {!currentUser ? <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
+                    {!currentUser ? <a href="/register" className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
                         Регистрация
                     </a> : "" }
                     {currentUser ? <a className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white" onClick={doLogout}>

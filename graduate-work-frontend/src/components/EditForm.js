@@ -1,39 +1,31 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
-import {useSelector} from "react-redux";
 
-function UploadForm() {
 
-    const navigate = useNavigate();
-    const {user: currentUser} = useSelector((state) => state.storageData.auth);
+function EditForm() {
 
     const [videoFile, setVideoFile] = useState()
     const [previewFile, setPreviewFile] = useState()
     const [header, setHeader] = useState()
     const [description, setDescription] = useState()
 
+    const navigate = useNavigate();
+
     function uploadFile(event) {
         event.preventDefault()
         const formData = new FormData();
-        formData.append('upload', videoFile);
-        formData.append('preview', previewFile);
-        formData.append('header', header);
-        formData.append('description', description);
-        formData.append('author', currentUser.profile_id);
-        console.log(currentUser.profile_id)
+        formData.append('file', file);
+        formData.append('fileName', file.name);
         const config = {
             headers: {
-                'Authorization': 'Bearer ' + currentUser.access_token
-            }
+                'content-type': 'multipart/form-data',
+            },
         };
-        const url = 'http://localhost:8000/api/upload/'
-
         axios.post(url, formData, config).then((response) => {
             console.log(response.data);
-        }).catch((err) => {
-            console.log(err);
         });
+
         navigate("/profile")
     }
 
@@ -85,4 +77,4 @@ function UploadForm() {
     )
 }
 
-export default UploadForm;
+export default EditForm;

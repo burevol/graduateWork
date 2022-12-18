@@ -5,10 +5,13 @@ from rest_framework import permissions
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.generics import get_object_or_404
+from django.core.exceptions import ValidationError
 from .models import Profile, Video, Comment, Like
 from .serializers import ProfileSerializer, VideoSerializer, CommentSerializer, LikeSerializer
 
@@ -19,6 +22,8 @@ class IsOwnerStuffOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS \
                 or request.user.is_staff:
             return True
+        if request.user.is_anonymous:
+            return False
         profile = Profile.objects.get(user=request.user)
         return obj.author == profile
 
@@ -30,6 +35,24 @@ class VideoViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['author', ]
     search_fields = ['header', 'description']
+
+
+class UploadViewSet(CreateAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [IsAuthenticated]
+
+    # def create(self, request, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         author = get_object_or_404(Profile, user=self.request.user)
+    #         request.data.update({'author': author.id})
+    #         return super(UploadViewSet, self).create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            author = get_object_or_404(Profile, user=self.request.user)
+            return serializer.save(author=author)
+        else:
+            raise ValidationError('Некорректный пользователь')
 
 
 class VideoByUserViewSet(viewsets.ModelViewSet):
@@ -91,6 +114,12 @@ class LikeView(APIView):
 class ProfileView(RetrieveAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+
+
+class ProfileUpdateView(UpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsOwnerStuffOrReadOnly]
 
 
 class UserToProfile(APIView):

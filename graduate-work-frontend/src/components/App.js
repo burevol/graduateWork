@@ -7,6 +7,7 @@ import UploadForm from "./UploadForm";
 import Chat from "./Chat";
 import Login from "./Login";
 import Navigation from "./Navbar";
+import Register from "./Register";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
                 <Route path='/chat/:user' element={<Chat/>}/>
                 <Route path='/my_subscribes' element={<Chat/>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/register" element={<Register/>}/>
             </Routes>
         </div>
     );
