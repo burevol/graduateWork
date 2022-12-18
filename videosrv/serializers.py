@@ -31,9 +31,11 @@ class VideoSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.user.username', required=False)
+
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'video', 'text', 'date_added']
+        fields = ['id', 'author', 'author_name', 'video', 'text', 'date_added']
 
 
 class LikeSerializer(serializers.ModelSerializer):

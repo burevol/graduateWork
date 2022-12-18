@@ -1,35 +1,18 @@
-import {useEffect, useRef} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {useNavigate, useParams} from 'react-router-dom';
-import {TextInput, Button} from 'flowbite-react';
-import Comment from './Comment';
-import {fetchComments, addComment} from "./store/commentSlice";
+import {Button} from 'flowbite-react';
+import CommentList from "./CommentList";
 import VideoInfo from "./VideoInfo";
 
 function VideoPage() {
 
-    const inputRef = useRef(null);
+
     const params = useParams();
     const videos = useSelector((state) => state.storageData.videos.videos);
     const item = videos.find(video => video.id === parseInt(params.id));
     const {user: currentUser} = useSelector((state) => state.storageData.auth);
 
-    const comments = useSelector((state) => state.storageData.comments.comments);
-    const dispatch = useDispatch();
     const navigate = useNavigate()
-
-    useEffect(() => {
-        dispatch(fetchComments(params.id));
-    }, [dispatch, params.id]);
-
-    const commentsFragment = comments.map((comment) =>
-        <Comment key={comment.id} author={comment.author} body={comment.body}/>
-    );
-
-    function handleClick() {
-        dispatch(addComment("User1", inputRef.current.value, params.id));
-        inputRef.current.value = "";
-    }
 
     function handleEditButton() {
         navigate(`/edit/${params.id}`)
@@ -49,21 +32,7 @@ function VideoPage() {
                         </div> : ""
                     }
                     <VideoInfo info={item}/>
-                    <div className="container mx-auto px-3">
-                        {commentsFragment}
-                    </div>
-                    <div className='flex'>
-                        <TextInput
-                            className='px-3'
-                            id="comment"
-                            type="text"
-                            placeholder="Оставьте комментарий"
-                            ref={inputRef}
-                        />
-                        <Button onClick={handleClick}>
-                            Ок
-                        </Button>
-                    </div>
+                    <CommentList videoId={params.id}/>
                 </div>
             }
         </div>
