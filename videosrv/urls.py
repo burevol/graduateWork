@@ -3,7 +3,7 @@ from rest_framework import routers
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 
 from .views import VideoViewSet, VideoByUserViewSet, SubscriptionsViewSet, CommentsViewSet, ProfileView, \
-    ProfileUpdateView, UserToProfile, UploadViewSet, LikeView
+    ProfileUpdateView, UserToProfile, UploadViewSet, LikeView, UpdateViewSet
 
 router = routers.DefaultRouter()
 router.register(r'video', VideoViewSet)
@@ -16,6 +16,7 @@ urlpatterns = [
     path('api/user/<int:pk>', ProfileView.as_view(), name='user'),
     path('api/user_update/<int:pk>', ProfileUpdateView.as_view(), name='user'),
     path('api/upload/', UploadViewSet.as_view()),
+    path('api/update/<int:pk>', UpdateViewSet.as_view()),
     path('api/like/', LikeView.as_view()),
     path('api/usertoprofile', UserToProfile.as_view()),
     path('password-reset/', PasswordResetView.as_view()),

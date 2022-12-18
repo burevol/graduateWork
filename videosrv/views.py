@@ -51,6 +51,12 @@ class UploadViewSet(CreateAPIView):
             raise ValidationError('Некорректный пользователь')
 
 
+class UpdateViewSet(UpdateAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [IsOwnerStuffOrReadOnly]
+
+
 class VideoByUserViewSet(viewsets.ModelViewSet):
     serializer_class = VideoSerializer
     permission_classes = [IsOwnerStuffOrReadOnly]

@@ -8,6 +8,7 @@ import Chat from "./Chat";
 import Login from "./Login";
 import Navigation from "./Navbar";
 import Register from "./Register";
+import EditForm from "./EditForm";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                 <Route path='/my_subscribes' element={<Chat/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
+                <Route path="/edit/:id" element={<EditForm/>} />
             </Routes>
         </div>
     );
