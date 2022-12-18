@@ -21,7 +21,6 @@ function UploadForm() {
         formData.append('header', header);
         formData.append('description', description);
         formData.append('author', currentUser.profile_id);
-        console.log(currentUser.profile_id)
         const config = {
             headers: {
                 'Authorization': 'Bearer ' + currentUser.access_token

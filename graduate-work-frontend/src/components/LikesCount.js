@@ -1,12 +1,29 @@
 import { useDispatch } from 'react-redux';
+import {useSelector} from "react-redux";
 import { likeVideo} from "./store/videoSlice";
+import axios from 'axios';
 
 function LikesCount(props) {
     
     const dispatch = useDispatch();
+    const {user: currentUser} = useSelector((state) => state.storageData.auth);
     
     function doLike(id) {
-        dispatch(likeVideo(id))
+        const config = {
+            headers: {
+                'Authorization': 'Bearer ' + currentUser.access_token
+            }
+        };
+        const url = `http://localhost:8000/api/like/?video_id=${id}`
+
+        axios.get(url, config).then((response) => {
+            console.log(response.data);
+            dispatch(likeVideo(id))
+        }).catch((err) => {
+            console.log(err);
+        });
+
+
     }
 
     return (

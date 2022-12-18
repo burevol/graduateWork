@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView
@@ -42,11 +43,6 @@ class UploadViewSet(CreateAPIView):
     serializer_class = VideoSerializer
     permission_classes = [IsAuthenticated]
 
-    # def create(self, request, *args, **kwargs):
-    #     if self.request.user.is_authenticated:
-    #         author = get_object_or_404(Profile, user=self.request.user)
-    #         request.data.update({'author': author.id})
-    #         return super(UploadViewSet, self).create(request, *args, **kwargs)
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
             author = get_object_or_404(Profile, user=self.request.user)
@@ -96,19 +92,24 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
 
 class LikeView(APIView):
-    def post(self, request):
+    def get(self, request):
         if self.request.user.is_authenticated:
             profile = Profile.objects.get(user=self.request.user)
             video_id = self.request.query_params.get('video_id')
             if video_id is not None:
                 try:
-                    video = Video.objects.get(video_id=video_id)
+                    video = Video.objects.get(id=video_id)
                 except ObjectDoesNotExist:
                     return Response("Video not found", status=status.HTTP_400_BAD_REQUEST)
-                Like.objects.create(video=video, user=profile)
+                try:
+                    Like.objects.create(video=video, user=profile)
+                except IntegrityError:
+                    return Response("Like already appended", status=status.HTTP_406_NOT_ACCEPTABLE)
                 return Response('Like successfully added', status=status.HTTP_201_CREATED)
             else:
                 return Response("Video not found", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
 
 
 class ProfileView(RetrieveAPIView):
