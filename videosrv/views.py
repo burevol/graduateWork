@@ -13,6 +13,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.generics import get_object_or_404
 from django.core.exceptions import ValidationError
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
 from .models import Profile, Video, Comment, Like
 from .serializers import ProfileSerializer, VideoSerializer, CommentSerializer, LikeSerializer
 
@@ -25,8 +28,13 @@ class IsOwnerStuffOrReadOnly(permissions.BasePermission):
             return True
         if request.user.is_anonymous:
             return False
-        profile = Profile.objects.get(user=request.user)
-        return obj.author == profile
+        return obj.author == request.user
+
+
+class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Grant, use this
+    adapter_class = GoogleOAuth2Adapter
+    #callback_url = CALLBACK_URL_YOU_SET_ON_GOOGLE
+    client_class = OAuth2Client
 
 
 class VideoViewSet(viewsets.ModelViewSet):
@@ -45,7 +53,7 @@ class UploadViewSet(CreateAPIView):
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
-            author = get_object_or_404(Profile, user=self.request.user)
+            author = get_object_or_404(Profile, pk=self.request.user.id)
             return serializer.save(author=author)
         else:
             raise ValidationError('Некорректный пользователь')
@@ -127,16 +135,3 @@ class ProfileUpdateView(UpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsOwnerStuffOrReadOnly]
-
-
-class UserToProfile(APIView):
-    def get(self, request):
-        user_id = self.request.query_params.get('user_id')
-        if user_id is not None:
-            try:
-                id = Response(str(Profile.objects.get(user_id=user_id).id), status=status.HTTP_200_OK)
-            except ObjectDoesNotExist:
-                return Response("Profile not found", status=status.HTTP_400_BAD_REQUEST)
-            return id
-        else:
-            return Response("Profile not found", status=status.HTTP_400_BAD_REQUEST)

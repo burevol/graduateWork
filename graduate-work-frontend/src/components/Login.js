@@ -7,6 +7,7 @@ import * as Yup from "yup";
 
 import {login} from "./store/auth";
 import {clearMessage} from "./store/message";
+import GoogleSocialAuth from "./GoogleSocialAuth";
 
 const Login = () => {
     let navigate = useNavigate();
@@ -94,6 +95,7 @@ const Login = () => {
                     </div>
                 </Form>
             </Formik>
+            <GoogleSocialAuth/>
             {message && (
                 <Alert
                     color="failure">

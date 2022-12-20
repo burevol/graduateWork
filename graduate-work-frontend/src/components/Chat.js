@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom';
-import Navigation from "./Navbar";
 import MyMessage from './MyMessage';
 import OtherMessage from './OtherMessage.js';
 import { commitMessage } from './store/messages';
@@ -46,7 +45,6 @@ function Chat() {
 
     return (
         <div>
-            <Navigation />
             <div className="container mx-auto shadow-lg rounded-lg">
 
                 <div className="flex flex-row justify-between bg-white max-h-96 overflow-y-scroll">

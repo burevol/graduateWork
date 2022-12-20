@@ -20,6 +20,7 @@ const Register = () => {
         username: "",
         email: "",
         password: "",
+        phone: '',
     };
 
     const validationSchema = Yup.object().shape({
@@ -46,14 +47,16 @@ const Register = () => {
                     val.toString().length <= 40
             )
             .required("This field is required!"),
+        phone: Yup.string()
+            .required(),
     });
 
     const handleRegister = (formValue) => {
-        const {username, email, password} = formValue;
+        const {username, email, password, phone} = formValue;
 
         setSuccessful(false);
 
-        dispatch(register({username, email, password}))
+        dispatch(register({username, email, password, phone}))
             .unwrap()
             .then(() => {
                 setSuccessful(true);
@@ -92,6 +95,18 @@ const Register = () => {
                                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"/>
                                 <ErrorMessage
                                     name="email"
+                                    component="div"
+                                    className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                                />
+                            </div>
+
+                             <div className="form-group">
+                                <label htmlFor="phone"
+                                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone number</label>
+                                <Field name="phone" type="text"
+                                       className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"/>
+                                <ErrorMessage
+                                    name="phone"
                                     component="div"
                                     className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
                                 />

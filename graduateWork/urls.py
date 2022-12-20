@@ -22,6 +22,7 @@ from dj_rest_auth.registration.views import RegisterView, VerifyEmailView, Confi
 from dj_rest_auth.views import LoginView, LogoutView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from videosrv.views import GoogleLogin
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -41,6 +42,7 @@ urlpatterns = [
     path('webpush/', include('webpush.urls')),
     path('account-confirm-email/<str:key>/', ConfirmEmailView.as_view()),
     path('register/', RegisterView.as_view()),
+    path('login/google/', GoogleLogin.as_view(), name='google_login'),
     path('login/', LoginView.as_view()),
     path('logout/', LogoutView.as_view()),
     path('verify-email/',
@@ -49,6 +51,7 @@ urlpatterns = [
          VerifyEmailView.as_view(), name='account_email_verification_sent'),
     re_path(r'^account-confirm-email/(?P<key>[-:\w]+)/$',
             VerifyEmailView.as_view(), name='account_confirm_email'),
+    path('accounts/', include('allauth.urls')),
     path('', include('videosrv.urls'))
 ]
 

@@ -11,13 +11,13 @@ function VideoList(props) {
     useEffect(() => {
         dispatch(fetchVideo());
     }, [dispatch]);
-
+    console.log(videos)
     const videoFragment = (props.user === null ?
         videos.map((videoCard) =>
             <Video key={videoCard.id} info={videoCard} />
         )
         :
-        videos.filter(video => video.author.id === parseInt(props.user)).map((videoCard) =>
+        videos.filter(video => video.author === parseInt(props.user)).map((videoCard) =>
             <Video key={videoCard.id} info={videoCard} />
         ));
 

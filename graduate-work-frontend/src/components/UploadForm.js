@@ -12,6 +12,9 @@ function UploadForm() {
     const [previewFile, setPreviewFile] = useState()
     const [header, setHeader] = useState()
     const [description, setDescription] = useState()
+    const [previewURL, setPreviewURL] = useState()
+    const [videoURL, setVideoURL] = useState()
+
 
     function uploadFile(event) {
         event.preventDefault()
@@ -20,7 +23,7 @@ function UploadForm() {
         formData.append('preview', previewFile);
         formData.append('header', header);
         formData.append('description', description);
-        formData.append('author', currentUser.profile_id);
+        formData.append('author', currentUser.user.pk);
         const config = {
             headers: {
                 'Authorization': 'Bearer ' + currentUser.access_token
@@ -38,10 +41,12 @@ function UploadForm() {
 
     function handleChangeVideoFile(event) {
         setVideoFile(event.target.files[0])
+        setVideoURL(URL.createObjectURL(event.target.files[0]))
     }
 
     function handleChangePreviewFile(event) {
         setPreviewFile(event.target.files[0])
+        setPreviewURL(URL.createObjectURL(event.target.files[0]))
     }
 
     function handleChangeHeader(event) {
@@ -55,11 +60,23 @@ function UploadForm() {
     return (
         <div>
             <div className="container max-w-sm px-4">
+                {(videoFile) ?
+                    <video id={'vidId'}>
+                        <source src={videoURL} type="video/mp4"/>
+                    </video>
+                    :
+                    ""
+                }
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file_input">Файл
                     видео</label>
                 <input
                     className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input" type="file" onChange={handleChangeVideoFile}></input>
+                {(previewFile) ?
+                    <img className="rounded-t-lg" src={previewURL} alt=""/>
+                    :
+                    ""
+                }
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="pict_input">Файл
                     превью</label>
                 <input

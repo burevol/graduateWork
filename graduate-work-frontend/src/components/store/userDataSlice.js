@@ -9,7 +9,7 @@ export const profileSlice = createSlice({
     },
     reducers: {
         profileSuccess: (state, action) => {
-            ({ user: {username: state.username}, avatar: state.img } = action.payload)
+            ({ username: state.username, avatar: state.img } = action.payload)
             state.isLoading = false;
         },
     },

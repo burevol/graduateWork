@@ -27,7 +27,7 @@ function VideoInfo(props) {
             </h5>
 
             <p className="font-normal text-gray-700 dark:text-gray-400 cursor-pointer" onClick={goToUser}>
-                {props.info.author.user.username}
+                {props.info.author_name}
             </p>
             <p className="font-light italic text-gray-700 dark:text-gray-400">
                 {new Date(props.info.date_added).toLocaleString()}

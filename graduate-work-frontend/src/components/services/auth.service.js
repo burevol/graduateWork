@@ -2,12 +2,13 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000/";
 
-const register = (username, email, password) => {
+const register = (username, email, password, phone) => {
     return axios.post(API_URL + "register/", {
         username: username,
         email: email,
         password1: password,
-        password2: password
+        password2: password,
+        phone_number: phone,
     });
 };
 
@@ -32,17 +33,10 @@ const logout = () => {
 
 };
 
-const userToProfile = (id) => {
-    return axios.get(API_URL + `api/usertoprofile?user_id=${id}`,).then((response) => {
-        return response.data;
-    })
-};
-
 const authService = {
     register,
     login,
     logout,
-    userToProfile
 };
 
 export default authService;

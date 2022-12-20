@@ -1,37 +1,38 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from django.db import transaction
 from .models import Profile, Video, Comment, Like
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+class ProfileSerializer(RegisterSerializer):
+    phone_number = serializers.CharField(max_length=30)
+    avatar = serializers.FileField(required=False)
 
-
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=True)
-
-    class Meta:
-        model = Profile
-        fields = ['id', 'user', 'avatar']
+    @transaction.atomic
+    def save(self, request):
+        user = super().save(request)
+        user.phone_number = self.data.get('phone_number')
+        user.avatar = self.data.get('avatar')
+        user.save()
+        return user
 
 
 class VideoSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
-    author = ProfileSerializer(required=False)
     extra_kwargs = {'author': {'required': False}}
+    author_name = serializers.CharField(source='author.username', required=False)
 
     class Meta:
         model = Video
-        fields = ['id', 'upload', 'preview', 'author', 'date_added', 'header', 'description', 'likes_count']
+        fields = ['id', 'upload', 'preview', 'author', 'author_name', 'date_added', 'header', 'description',
+                  'likes_count']
 
     def get_likes_count(self, obj):
         return obj.get_likes_count()
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author_name = serializers.CharField(source='author.user.username', required=False)
+    author_name = serializers.CharField(source='author.username', required=False)
 
     class Meta:
         model = Comment

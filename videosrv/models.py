@@ -1,8 +1,7 @@
 from os import path
 import uuid
-
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
 
 def uuid_path(_, filename):
@@ -11,9 +10,9 @@ def uuid_path(_, filename):
 
 # Create your models here.
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class Profile(AbstractUser):
     avatar = models.FileField(upload_to=uuid_path, blank=True)
+    phone_number = models.CharField(max_length=30, blank=True)
     subscriptions = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='signed_users')
     ignored_users = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='banned_users')
 
@@ -22,7 +21,7 @@ class Profile(models.Model):
         verbose_name_plural = 'profiles'
 
     def __str__(self):
-        return self.user.username
+        return self.username
 
 
 class Video(models.Model):

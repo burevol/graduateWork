@@ -20,7 +20,7 @@ function CommentList({videoId}) {
 
     function handleClick() {
         const data = {
-            author: currentUser.profile_id,
+            author: currentUser.user.pk,
             video: videoId,
             text: inputRef.current.value
         }

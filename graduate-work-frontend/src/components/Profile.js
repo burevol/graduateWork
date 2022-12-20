@@ -21,7 +21,7 @@ function Profile() {
         })
     }
     const params = useParams();
-    const profileId = params.user ? params.user : currentUser.profile_id
+    const profileId = params.user ? params.user : currentUser.user.pk
 
     useEffect(() => {
         dispatch(fetchProfile(profileId));
@@ -88,11 +88,11 @@ function Profile() {
                 <div>
                     <div className="flex flex-col gap-2 btn-group">
                         {userVideoButton}
-                        {currentUser.profile_id === profileId ? uploadVideoButton : ""}
-                        {currentUser.profile_id === profileId ? ViewSubscribeButton : ""}
-                        {currentUser.profile_id !== profileId ? chatButton : ""}
-                        {currentUser.profile_id !== profileId ? SubscribeButton : ""}
-                        {currentUser.profile_id === profileId ? logoutButton : ""}
+                        {currentUser.user.pk === profileId ? uploadVideoButton : ""}
+                        {currentUser.user.pk === profileId ? ViewSubscribeButton : ""}
+                        {currentUser.user.pk !== profileId ? chatButton : ""}
+                        {currentUser.user.pk !== profileId ? SubscribeButton : ""}
+                        {currentUser.user.pk === profileId ? logoutButton : ""}
                     </div>
                 </div>
             </div>

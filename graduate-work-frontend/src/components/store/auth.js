@@ -7,9 +7,9 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 export const register = createAsyncThunk(
     "auth/register",
-    async ({username, email, password}, thunkAPI) => {
+    async ({username, email, password, phone}, thunkAPI) => {
         try {
-            const response = await AuthService.register(username, email, password);
+            const response = await AuthService.register(username, email, password, phone);
             thunkAPI.dispatch(setMessage(response.data.message));
             return response.data;
         } catch (error) {
@@ -30,8 +30,6 @@ export const login = createAsyncThunk(
     async ({username, password}, thunkAPI) => {
         try {
             const data = await AuthService.login(username, password);
-            const profileId = await AuthService.userToProfile(data.user.pk)
-            data.profile_id = profileId
             if (data.access_token) {
                 localStorage.setItem("user", JSON.stringify(data));
             }
