@@ -25,6 +25,28 @@ export const register = createAsyncThunk(
     }
 );
 
+export const googleLogin = createAsyncThunk(
+    "auth/login",
+    async ({access_token}, thunkAPI) => {
+        try {
+            const login_info = await AuthService.googleLogin(access_token);
+            if (login_info.data.access_token) {
+                localStorage.setItem("user", JSON.stringify(login_info.data));
+            }
+            return {user: login_info.data};
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            thunkAPI.dispatch(setMessage(message));
+            return thunkAPI.rejectWithValue();
+        }
+    }
+);
+
 export const login = createAsyncThunk(
     "auth/login",
     async ({username, password}, thunkAPI) => {

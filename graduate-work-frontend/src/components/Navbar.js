@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Navbar, Button} from "flowbite-react";
+import {Navbar} from "flowbite-react";
 import {useNavigate} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux'
 import SearchField from "./search"

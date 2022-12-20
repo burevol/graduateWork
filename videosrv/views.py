@@ -34,7 +34,7 @@ class IsOwnerStuffOrReadOnly(permissions.BasePermission):
 class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
     #callback_url = CALLBACK_URL_YOU_SET_ON_GOOGLE
-    client_class = OAuth2Client
+    #client_class = OAuth2Client
 
 
 class VideoViewSet(viewsets.ModelViewSet):
@@ -108,7 +108,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 class LikeView(APIView):
     def get(self, request):
         if self.request.user.is_authenticated:
-            profile = Profile.objects.get(user=self.request.user)
+            profile = Profile.objects.get(pk=self.request.user.id)
             video_id = self.request.query_params.get('video_id')
             if video_id is not None:
                 try:

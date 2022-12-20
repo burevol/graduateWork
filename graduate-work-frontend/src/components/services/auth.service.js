@@ -24,6 +24,18 @@ const login = (username, password) => {
         });
 };
 
+const googleLogin = async (access_token) => {
+    return axios.post(
+        "http://localhost:8000/login/google/",
+        {
+            access_token: access_token,
+        }
+    ).then((res) => {
+        return res;
+    }).catch((err) => {console.log(err)})
+
+};
+
 const logout = () => {
     localStorage.removeItem("user");
     return axios.post(API_URL + "logout/",).then((response) => {
@@ -37,6 +49,7 @@ const authService = {
     register,
     login,
     logout,
+    googleLogin,
 };
 
 export default authService;
