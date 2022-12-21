@@ -6,7 +6,7 @@ from .models import Profile, Video, Comment, Like
 
 class ProfileSerializer(RegisterSerializer):
     phone_number = serializers.CharField(max_length=30)
-    avatar = serializers.FileField(required=False)
+    avatar = serializers.FileField(required=False, max_length=255)
 
     @transaction.atomic
     def save(self, request):
@@ -15,6 +15,20 @@ class ProfileSerializer(RegisterSerializer):
         user.avatar = self.data.get('avatar')
         user.save()
         return user
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ['username', 'subscriptions']
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['username', 'phone_number', 'email', 'avatar']
 
 
 class VideoSerializer(serializers.ModelSerializer):

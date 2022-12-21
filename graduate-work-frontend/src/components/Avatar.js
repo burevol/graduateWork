@@ -1,12 +1,10 @@
 import {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
 import {Avatar} from "flowbite-react";
 import {api} from './api/main_api'
 
 function AvatarField({userId}) {
 
     const [img, setImg] = useState('');
-
     useEffect(() => {
         if (userId) {
             try {

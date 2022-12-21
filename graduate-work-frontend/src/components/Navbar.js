@@ -44,7 +44,7 @@ export default function Navigation() {
                 <button
                     onClick={toggleMenu}
                 >
-                    { currentUser ? <AvatarField userId={currentUser.profile_id}/> : <AvatarField userId={null}/> }
+                    { currentUser ? <AvatarField userId={currentUser.user.pk}/> : <AvatarField userId={null}/> }
                 </button>
                  <button
                         className={

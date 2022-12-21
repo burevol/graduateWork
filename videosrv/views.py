@@ -14,10 +14,9 @@ from rest_framework import filters
 from rest_framework.generics import get_object_or_404
 from django.core.exceptions import ValidationError
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from .models import Profile, Video, Comment, Like
-from .serializers import ProfileSerializer, VideoSerializer, CommentSerializer, LikeSerializer
+from .serializers import ProfileSerializer, VideoSerializer, CommentSerializer, UserSerializer
 
 
 class IsOwnerStuffOrReadOnly(permissions.BasePermission):
@@ -31,10 +30,19 @@ class IsOwnerStuffOrReadOnly(permissions.BasePermission):
         return obj.author == request.user
 
 
+class IsAuthorizedUserStuffOrReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS \
+                or request.user.is_staff:
+            return True
+        if request.user.is_anonymous:
+            return False
+        return obj == request.user
+
+
 class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Grant, use this
     adapter_class = GoogleOAuth2Adapter
-    #callback_url = CALLBACK_URL_YOU_SET_ON_GOOGLE
-    #client_class = OAuth2Client
 
 
 class VideoViewSet(viewsets.ModelViewSet):
@@ -128,10 +136,10 @@ class LikeView(APIView):
 
 class ProfileView(RetrieveAPIView):
     queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+    serializer_class = UserSerializer
 
 
 class ProfileUpdateView(UpdateAPIView):
     queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    permission_classes = [IsOwnerStuffOrReadOnly]
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthorizedUserStuffOrReadOnly]

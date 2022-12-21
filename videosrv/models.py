@@ -11,7 +11,7 @@ def uuid_path(_, filename):
 # Create your models here.
 
 class Profile(AbstractUser):
-    avatar = models.FileField(upload_to=uuid_path, blank=True)
+    avatar = models.FileField(upload_to=uuid_path, blank=True, max_length=255)
     phone_number = models.CharField(max_length=30, blank=True)
     subscriptions = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='signed_users')
     ignored_users = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='banned_users')

@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 function VideoInfo(props) {
    
     const linkToVideo = "/video/" + props.info.id;
-    const linkToUser = `/user/${props.info.author.id}`
+    const linkToUser = `/user/${props.info.author}`
+
+    console.log(props.info)
 
     const navigate = useNavigate();
 
