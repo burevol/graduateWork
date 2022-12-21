@@ -17,14 +17,6 @@ class ProfileSerializer(RegisterSerializer):
         return user
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Profile
-        fields = ['username', 'subscriptions']
-
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile

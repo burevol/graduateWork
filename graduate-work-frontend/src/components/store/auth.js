@@ -2,6 +2,8 @@ import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import {setMessage} from "./message";
 
 import AuthService from "../services/auth.service";
+import {api} from "../api/main_api";
+import {commentSlice} from "./commentSlice";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -76,12 +78,17 @@ export const logout = createAsyncThunk(
 });
 
 const initialState = user
-    ? {isLoggedIn: true, user}
-    : {isLoggedIn: false, user: null};
+    ? {isLoggedIn: true, subscriptions: [],  user}
+    : {isLoggedIn: false, subscriptions: [], user: null};
 
 const authSlice = createSlice({
     name: "auth",
     initialState,
+    reducers: {
+        setSubscriptions: (state, action) => {
+            state.subscriptions = action.payload;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(register.fulfilled, state => {
@@ -104,6 +111,23 @@ const authSlice = createSlice({
             })
     },
 });
+
+const { setSubscriptions } = authSlice.actions
+
+export const fetchSubscriptions = (token) => async dispatch => {
+    try {
+         const config = {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+        await api.get(`/api/subscribe/`, config)
+            .then((response) => dispatch(setSubscriptions(response.data)))
+    }
+    catch (e) {
+        return console.error(e.message);
+    }
+}
 
 const {reducer} = authSlice;
 export default reducer;

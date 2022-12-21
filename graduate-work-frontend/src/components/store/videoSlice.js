@@ -33,6 +33,21 @@ export const fetchVideo = () => async dispatch => {
     }
 }
 
+export const fetchSubscriptions = (token) => async dispatch => {
+    try {
+        const config = {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+        await api.get('api/subscriptions/', config)
+            .then((response) => dispatch(videoSuccess(response.data)))
+    }
+    catch (e) {
+        return console.error(e.message);
+    }
+}
+
 export const likeVideo = (id) => async dispatch => {
     dispatch(like(id))
 }

@@ -95,7 +95,7 @@ class SubscriptionsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            profile = Profile.objects.get(user=self.request.user)
+            profile = Profile.objects.get(pk=self.request.user.id)
             return Video.objects.filter(author__in=profile.subscriptions.all())
         else:
             return Video.objects.none()
@@ -132,6 +132,48 @@ class LikeView(APIView):
                 return Response("Video not found", status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class SubscribeView(APIView):
+    def post(self, request):
+        if self.request.user.is_authenticated:
+            profile = get_object_or_404(Profile, pk=self.request.user.id)
+            subscribe_to_id = self.request.data['subscribe_to']
+            subscribe_to = Profile.objects.get(pk=subscribe_to_id)
+            profile.subscriptions.add(subscribe_to)
+            return Response('Subscription successfully added', status=status.HTTP_201_CREATED)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
+
+    def get(self, request):
+        if self.request.user.is_authenticated:
+            profile = get_object_or_404(Profile, pk=self.request.user.id)
+            subscriptions = [user.pk for user in profile.subscriptions.all()]
+            return Response(subscriptions)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class UnSubscribeView(APIView):
+    def post(self, request):
+        if self.request.user.is_authenticated:
+            profile = get_object_or_404(Profile, pk=self.request.user.id)
+            unsubscribe_to_id = self.request.data['subscribe_to']
+            unsubscribe_to = Profile.objects.get(pk=unsubscribe_to_id)
+            profile.subscriptions.remove(unsubscribe_to)
+            return Response('Subscription successfully removed', status=status.HTTP_201_CREATED)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class IgnoreView(APIView):
+    def post(self, request):
+        if self.request.user.is_authenticated:
+            profile = get_object_or_404(Profile, pk=self.request.user.id)
+            ignore_to_id = self.request.data['ignore_to']
+            ignore_to = Profile.objects.get(pk=ignore_to_id)
+            profile.ignored_users.add(ignore_to)
+            return Response('Ignore successfully added', status=status.HTTP_201_CREATED)
 
 
 class ProfileView(RetrieveAPIView):

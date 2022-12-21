@@ -3,16 +3,19 @@ import {Card, Button} from "flowbite-react";
 import {useSelector, useDispatch} from 'react-redux'
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {fetchProfile} from "./store/userDataSlice";
+import {fetchSubscriptions} from "./store/auth";
 import axios from "axios";
 
 function Profile() {
 
     const {user: currentUser} = useSelector((state) => state.storageData.auth);
+    const subscriptions = useSelector((state) => state.storageData.auth.subscriptions)
     const img = useSelector((state) => state.storageData.profileData.img)
     const username = useSelector((state) => state.storageData.profileData.username)
     const [avatarFile, setAvatarFile] = useState()
     const [avatarURL, setAvatarURL] = useState()
     const [avatarFileChanged, setAvatarFileChanged] = useState(false)
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -26,9 +29,11 @@ function Profile() {
 
     const params = useParams();
     const profileId = params.user ? params.user : currentUser.user.pk
+    const isSubscribed = subscriptions.includes(Number(profileId))
 
     useEffect(() => {
         dispatch(fetchProfile(profileId));
+        dispatch(fetchSubscriptions(currentUser.access_token))
     }, [dispatch, profileId]);
 
 
@@ -59,15 +64,45 @@ function Profile() {
         const url = `http://localhost:8000/api/user_update/${currentUser.user.pk}`
 
         axios.patch(url, formData, config).then((response) => {
-            console.log(response.data);
+
         }).catch((err) => {
             console.log(err);
         });
         navigate("/profile")
     }
 
-    function Subscribe() {
+    function subscribe() {
 
+        const url = `http://localhost:8000/api/subscribe/`
+        const config = {
+            headers: {
+                'Authorization': 'Bearer ' + currentUser.access_token
+            }
+        };
+        const data = {subscribe_to: profileId}
+        axios.post(url, data, config).then((response) => {
+            dispatch(fetchSubscriptions(currentUser.access_token))
+            //setUpdate(update + 1)
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    function unsubscribe() {
+
+        const url = `http://localhost:8000/api/unsubscribe/`
+        const config = {
+            headers: {
+                'Authorization': 'Bearer ' + currentUser.access_token
+            }
+        };
+        const data = {subscribe_to: profileId}
+        axios.post(url, data, config).then((response) => {
+;           dispatch(fetchSubscriptions(currentUser.access_token))
+            //setUpdate(update + 1)
+        }).catch((err) => {
+            console.log(err);
+        });
     }
 
     const userVideoButton = <div>
@@ -78,14 +113,20 @@ function Profile() {
         </Button>
     </div>;
 
-    const SubscribeButton = <div>
-            <Button className='w-48' onClick={()=>s}>
-                Подписаться
-            </Button>
+    const subscribeButton = <div>
+        <Button className='w-48' onClick={subscribe}>
+            Подписаться
+        </Button>
+    </div>
+
+    const unSubscribeButton = <div>
+        <Button className='w-48' onClick={unsubscribe}>
+            Отписаться
+        </Button>
     </div>
 
     const ViewSubscribeButton = <div>
-        <Link to={"/my_subscribes"}>
+        <Link to={"/subscriptions"}>
             <Button className='w-48'>
                 Мои подписки
             </Button>
@@ -146,9 +187,10 @@ function Profile() {
                     <div className="flex flex-col gap-2 btn-group">
                         {userVideoButton}
                         {currentUser.user.pk === profileId ? uploadVideoButton : ""}
-                        {currentUser.user.pk === profileId ? ViewSubscribeButton : ""}
+                        {!isSubscribed && currentUser.user.pk !== profileId ? subscribeButton : ""}
+                        {isSubscribed && currentUser.user.pk !== profileId ? unSubscribeButton : ""}
                         {currentUser.user.pk !== profileId ? chatButton : ""}
-                        {currentUser.user.pk !== profileId ? SubscribeButton : ""}
+                        {currentUser.user.pk === profileId ? ViewSubscribeButton : ""}
                         {currentUser.user.pk === profileId ? logoutButton : ""}
                     </div>
                 </div>
