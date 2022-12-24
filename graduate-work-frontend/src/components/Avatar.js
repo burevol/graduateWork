@@ -11,6 +11,7 @@ function AvatarField({userId}) {
                 api.get(`/api/user/${userId}`)
                     .then((response) => {
                         setImg(response.data.avatar)
+                        console.log(response.data.avatar)
                     })
             } catch (e) {
                 return console.error(e.message);
@@ -21,12 +22,10 @@ function AvatarField({userId}) {
     }, [userId]);
 
     return (<div className="flex flex-wrap gap-2">
-        {/* <Link to={`/user/${user}`}> */}
-        <Avatar
-            img={img}
-            rounded={true}
-        />
-        {/*</Link>*/}
+
+        <img className="w-10 h-10 rounded-full" src={img} alt="Rounded avatar"/>
+
+
     </div>)
 }
 

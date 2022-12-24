@@ -6,8 +6,6 @@ function VideoInfo(props) {
     const linkToVideo = "/video/" + props.info.id;
     const linkToUser = `/user/${props.info.author}`
 
-    console.log(props.info)
-
     const navigate = useNavigate();
 
     function goToUser() {

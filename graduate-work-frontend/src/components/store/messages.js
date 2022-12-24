@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const messagesSlice = createSlice({
     name: 'messagesData',
     initialState: {
+        chatSocket: null,
         messages: [
             {
                 id: 1,
@@ -30,17 +31,21 @@ export const messagesSlice = createSlice({
             state.messages = [...state.messages, action.payload];
             state.max_id ++;
         },
+        setChatSocket: (state, action) => {
+            state.chatSocket = action.payload;
+        }
     },
 });
 
 export default messagesSlice.reducer
 
-const { addMessage } = messagesSlice.actions
+const { addMessage, setChatSocket } = messagesSlice.actions
 
 export const commitMessage = (message) => async dispatch => {
     dispatch(addMessage(message))
   
 }
+
 
 
 

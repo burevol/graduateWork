@@ -16,7 +16,6 @@ function VideoList(props) {
             dispatch(fetchVideo(null));
         }
     }, [dispatch]);
-    console.log(videos)
     const videoFragment = (props.user === null ?
         videos.map((videoCard) =>
             <Video key={videoCard.id} info={videoCard} />

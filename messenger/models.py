@@ -12,7 +12,7 @@ class Room(models.Model):
 
 class Message(models.Model):
     user_from = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='message_user_from')
-    room_to = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='message_user_to', null=True)
+    user_to = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='message_user_to', null=True)
     message = models.CharField(max_length=512)
     read = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
