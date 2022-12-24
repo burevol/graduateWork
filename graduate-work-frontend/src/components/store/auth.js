@@ -78,8 +78,8 @@ export const logout = createAsyncThunk(
 });
 
 const initialState = user
-    ? {isLoggedIn: true, subscriptions: [],  user}
-    : {isLoggedIn: false, subscriptions: [], user: null};
+    ? {isLoggedIn: true, subscriptions: [], banned: [], user}
+    : {isLoggedIn: false, subscriptions: [], banned: [], user: null};
 
 const authSlice = createSlice({
     name: "auth",
@@ -87,6 +87,9 @@ const authSlice = createSlice({
     reducers: {
         setSubscriptions: (state, action) => {
             state.subscriptions = action.payload;
+        },
+        setBanned: (state, action) => {
+            state.banned = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -112,7 +115,7 @@ const authSlice = createSlice({
     },
 });
 
-const { setSubscriptions } = authSlice.actions
+const { setSubscriptions, setBanned } = authSlice.actions
 
 export const fetchSubscriptions = (token) => async dispatch => {
     try {
@@ -123,6 +126,21 @@ export const fetchSubscriptions = (token) => async dispatch => {
         };
         await api.get(`/api/subscribe/`, config)
             .then((response) => dispatch(setSubscriptions(response.data)))
+    }
+    catch (e) {
+        return console.error(e.message);
+    }
+}
+
+export const fetchBanned = (token) => async dispatch => {
+    try {
+         const config = {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+        await api.get(`/api/ban/`, config)
+            .then((response) => dispatch(setBanned(response.data)))
     }
     catch (e) {
         return console.error(e.message);

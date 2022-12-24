@@ -6,10 +6,15 @@ import { fetchVideo } from "./store/videoSlice";
 function VideoList(props) {
     
     const videos = useSelector((state) => state.storageData.videos.videos);
+    const {user: currentUser, isLoggedIn : isLoggedIn} = useSelector((state) => state.storageData.auth);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(fetchVideo());
+        if (isLoggedIn) {
+            dispatch(fetchVideo(currentUser.access_token));
+        } else {
+            dispatch(fetchVideo(null));
+        }
     }, [dispatch]);
     console.log(videos)
     const videoFragment = (props.user === null ?

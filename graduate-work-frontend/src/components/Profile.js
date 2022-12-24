@@ -3,13 +3,14 @@ import {Card, Button} from "flowbite-react";
 import {useSelector, useDispatch} from 'react-redux'
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {fetchProfile} from "./store/userDataSlice";
-import {fetchSubscriptions} from "./store/auth";
+import {fetchBanned, fetchSubscriptions} from "./store/auth";
 import axios from "axios";
 
 function Profile() {
 
     const {user: currentUser} = useSelector((state) => state.storageData.auth);
-    const subscriptions = useSelector((state) => state.storageData.auth.subscriptions)
+    const subscriptions = useSelector((state) => state.storageData.auth.subscriptions);
+    const banned = useSelector((state) => state.storageData.auth.banned)
     const img = useSelector((state) => state.storageData.profileData.img)
     const username = useSelector((state) => state.storageData.profileData.username)
     const [avatarFile, setAvatarFile] = useState()
@@ -28,12 +29,14 @@ function Profile() {
     }
 
     const params = useParams();
-    const profileId = params.user ? params.user : currentUser.user.pk
+    const profileId = params.user ? params.user : currentUser.user.pk;
     const isSubscribed = subscriptions.includes(Number(profileId))
+    const isBanned = banned.includes(Number(profileId));
 
     useEffect(() => {
         dispatch(fetchProfile(profileId));
-        dispatch(fetchSubscriptions(currentUser.access_token))
+        dispatch(fetchSubscriptions(currentUser.access_token));
+        dispatch(fetchBanned(currentUser.access_token));
     }, [dispatch, profileId]);
 
 
@@ -82,7 +85,22 @@ function Profile() {
         const data = {subscribe_to: profileId}
         axios.post(url, data, config).then((response) => {
             dispatch(fetchSubscriptions(currentUser.access_token))
-            //setUpdate(update + 1)
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    function ignoreUser() {
+
+        const url = `http://localhost:8000/api/ban/`
+        const config = {
+            headers: {
+                'Authorization': 'Bearer ' + currentUser.access_token
+            }
+        };
+        const data = {ban_to: profileId}
+        axios.post(url, data, config).then((response) => {
+            dispatch(fetchBanned(currentUser.access_token))
         }).catch((err) => {
             console.log(err);
         });
@@ -99,7 +117,22 @@ function Profile() {
         const data = {subscribe_to: profileId}
         axios.post(url, data, config).then((response) => {
 ;           dispatch(fetchSubscriptions(currentUser.access_token))
-            //setUpdate(update + 1)
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    function unIgnoreUser() {
+
+        const url = `http://localhost:8000/api/unban/`
+        const config = {
+            headers: {
+                'Authorization': 'Bearer ' + currentUser.access_token
+            }
+        };
+        const data = {ban_to: profileId}
+        axios.post(url, data, config).then((response) => {
+;           dispatch(fetchBanned(currentUser.access_token))
         }).catch((err) => {
             console.log(err);
         });
@@ -122,6 +155,18 @@ function Profile() {
     const unSubscribeButton = <div>
         <Button className='w-48' onClick={unsubscribe}>
             Отписаться
+        </Button>
+    </div>
+
+    const banButton = <div>
+        <Button className='w-48' onClick={ignoreUser}>
+            Заблокировать
+        </Button>
+    </div>
+
+     const unBanButton = <div>
+        <Button className='w-48' onClick={unIgnoreUser}>
+            Разблокировать
         </Button>
     </div>
 
@@ -189,6 +234,8 @@ function Profile() {
                         {currentUser.user.pk === profileId ? uploadVideoButton : ""}
                         {!isSubscribed && currentUser.user.pk !== profileId ? subscribeButton : ""}
                         {isSubscribed && currentUser.user.pk !== profileId ? unSubscribeButton : ""}
+                        {!isBanned && currentUser.user.pk !== profileId ? banButton : ""}
+                        {isBanned && currentUser.user.pk !== profileId ? unBanButton : ""}
                         {currentUser.user.pk !== profileId ? chatButton : ""}
                         {currentUser.user.pk === profileId ? ViewSubscribeButton : ""}
                         {currentUser.user.pk === profileId ? logoutButton : ""}

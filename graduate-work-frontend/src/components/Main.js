@@ -7,7 +7,7 @@ function Main() {
     const user = searchParams.get('author');
     const search = searchParams.get('search')
     return (
-        <div>
+        <div className="mx-5">
             <VideoList user={user} search={search} />
         </div>
     );

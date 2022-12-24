@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { api } from '../api/main_api'
+import {createSlice} from '@reduxjs/toolkit'
+import {api} from '../api/main_api'
 
 export const videoSlice = createSlice({
     name: 'videoData',
@@ -17,18 +17,25 @@ export const videoSlice = createSlice({
     },
 });
 
-const { videoSuccess, like } = videoSlice.actions
+const {videoSuccess, like} = videoSlice.actions
 
 export default videoSlice.reducer
 
 // Actions
 
-export const fetchVideo = () => async dispatch => {
+export const fetchVideo = (token) => async dispatch => {
     try {
-        await api.get('/api/video')
+        let config = {}
+        if (token) {
+            config = {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            };
+        }
+        await api.get('/api/video', config)
             .then((response) => dispatch(videoSuccess(response.data)))
-    }
-    catch (e) {
+    } catch (e) {
         return console.error(e.message);
     }
 }
@@ -42,8 +49,7 @@ export const fetchSubscriptions = (token) => async dispatch => {
         };
         await api.get('api/subscriptions/', config)
             .then((response) => dispatch(videoSuccess(response.data)))
-    }
-    catch (e) {
+    } catch (e) {
         return console.error(e.message);
     }
 }

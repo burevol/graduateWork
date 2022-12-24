@@ -46,12 +46,21 @@ class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Gra
 
 
 class VideoViewSet(viewsets.ModelViewSet):
-    queryset = Video.objects.all()
     serializer_class = VideoSerializer
     permission_classes = [IsOwnerStuffOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['author', ]
     search_fields = ['header', 'description']
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            try:
+                profile = Profile.objects.get(pk=self.request.user.id)
+            except ObjectDoesNotExist:
+                return Video.objects.none()
+            return Video.objects.exclude(author__in=profile.ignored_users.all())
+        else:
+            return Video.objects.all()
 
 
 class UploadViewSet(CreateAPIView):
@@ -166,14 +175,36 @@ class UnSubscribeView(APIView):
             return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
 
 
-class IgnoreView(APIView):
+class BanView(APIView):
     def post(self, request):
         if self.request.user.is_authenticated:
             profile = get_object_or_404(Profile, pk=self.request.user.id)
-            ignore_to_id = self.request.data['ignore_to']
-            ignore_to = Profile.objects.get(pk=ignore_to_id)
-            profile.ignored_users.add(ignore_to)
-            return Response('Ignore successfully added', status=status.HTTP_201_CREATED)
+            ban_to_id = self.request.data['ban_to']
+            ban_to = Profile.objects.get(pk=ban_to_id)
+            profile.ignored_users.add(ban_to)
+            return Response('Ban successfully added', status=status.HTTP_201_CREATED)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
+
+    def get(self, request):
+        if self.request.user.is_authenticated:
+            profile = get_object_or_404(Profile, pk=self.request.user.id)
+            banned_users = [user.pk for user in profile.ignored_users.all()]
+            return Response(banned_users)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
+
+
+class UnBanView(APIView):
+    def post(self, request):
+        if self.request.user.is_authenticated:
+            profile = get_object_or_404(Profile, pk=self.request.user.id)
+            unban_to_id = self.request.data['ban_to']
+            unban_to = Profile.objects.get(pk=unban_to_id)
+            profile.ignored_users.remove(unban_to)
+            return Response('Ban successfully removed', status=status.HTTP_201_CREATED)
+        else:
+            return Response("User not authorized", status=status.HTTP_401_UNAUTHORIZED)
 
 
 class ProfileView(RetrieveAPIView):
