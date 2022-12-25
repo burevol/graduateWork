@@ -17,7 +17,7 @@ function VideoPage() {
     function handleEditButton() {
         navigate(`/edit/${params.id}`)
     }
-
+console.log(item)
     return (
         <div className="container mx-auto">
             {
@@ -26,7 +26,7 @@ function VideoPage() {
                         <source src={item.upload} type="video/mp4"/>
                     </video>
 
-                    {(Number(currentUser.profile_id) === item.author.id) ?
+                    {(Number(currentUser.user.pk) === item.author) ?
                         <div className="py-1">
                             <Button onClick={handleEditButton}>Редактировать</Button>
                         </div> : ""
