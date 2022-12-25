@@ -4,6 +4,7 @@ from channels.db import database_sync_to_async
 from django.db.models import Q
 from asgiref.sync import sync_to_async
 from videosrv.models import Profile
+from webpush_drf import send_user_notification
 from .models import Message, Room
 from .serializers import MessageSerializer
 from videosrv.serializers import ProfileSerializer
@@ -72,6 +73,7 @@ class MessengerConsumer(AsyncWebsocketConsumer):
                         'message': message_json
                     }
                 )
+                await self.send_notification(user_to=user_to, body=message)
 
         elif command == 'enter_private':
             await self.leave_room()
@@ -93,6 +95,8 @@ class MessengerConsumer(AsyncWebsocketConsumer):
                     'message': messages
                 }
             )
+            await self.mark_as_read(user2)
+
         elif command == 'get_users':
             users = await self.get_users(self.user)
             await self.send(json.dumps({
@@ -143,6 +147,11 @@ class MessengerConsumer(AsyncWebsocketConsumer):
         return Profile.objects.get(pk=int(user_id)).username
 
     @database_sync_to_async
+    def send_notification(self, user_to, body):
+        payload = {'head': self.username, 'body': body}
+        send_user_notification(user=user_to, payload=payload, ttl=1000)
+
+    @database_sync_to_async
     def save_message(self, user_from, user_to, message):
         new_message = Message.objects.create(user_from=user_from, user_to=user_to, message=message, read=False)
         serializer = MessageSerializer(new_message)
@@ -172,3 +181,7 @@ class MessengerConsumer(AsyncWebsocketConsumer):
         users_from = Message.objects.filter(user_to=user).values_list("user_from", "user_from__username").distinct()
         users = users_to.union(users_from)
         return list(users)
+
+    @database_sync_to_async
+    def mark_as_read(self, user):
+        Message.objects.filter(user_from=user, user_to=self.user).update(read=True)

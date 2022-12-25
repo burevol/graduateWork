@@ -4,6 +4,7 @@ import {setMessage} from "./message";
 import AuthService from "../services/auth.service";
 import {api} from "../api/main_api";
 import {commentSlice} from "./commentSlice";
+import axios from "axios";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -75,7 +76,7 @@ export const logout = createAsyncThunk(
     "auth/logout",
     async () => {
         await AuthService.logout();
-});
+    });
 
 const initialState = user
     ? {isLoggedIn: true, subscriptions: [], banned: [], user}
@@ -103,6 +104,7 @@ const authSlice = createSlice({
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoggedIn = true;
                 state.user = action.payload.user;
+                asyncSubscribe(state.user.access_token);
             })
             .addCase(login.rejected, state => {
                 state.isLoggedIn = false;
@@ -115,37 +117,99 @@ const authSlice = createSlice({
     },
 });
 
-const { setSubscriptions, setBanned } = authSlice.actions
+const {setSubscriptions, setBanned} = authSlice.actions
 
 export const fetchSubscriptions = (token) => async dispatch => {
     try {
-         const config = {
+        const config = {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
         };
         await api.get(`/api/subscribe/`, config)
             .then((response) => dispatch(setSubscriptions(response.data)))
-    }
-    catch (e) {
+    } catch (e) {
         return console.error(e.message);
     }
 }
 
 export const fetchBanned = (token) => async dispatch => {
     try {
-         const config = {
+        const config = {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
         };
         await api.get(`/api/ban/`, config)
             .then((response) => dispatch(setBanned(response.data)))
-    }
-    catch (e) {
+    } catch (e) {
         return console.error(e.message);
     }
 }
+
+function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    const outputData = outputArray.map((output, index) => rawData.charCodeAt(index));
+
+    return outputData;
+}
+
+const asyncSubscribe = async (token) => {
+    if ('serviceWorker' in navigator) {
+        await navigator.serviceWorker.getRegistration().then(r => subscribe(r, token)).catch((err) => {
+            console.log(err)
+        });
+    }
+}
+
+
+const subscribe = async (reg, token) => {
+    const subscription = await reg.pushManager.getSubscription();
+    if (subscription) {
+        await sendSubData(subscription, token);
+        return;
+    }
+
+    const key = "BPdMGEsjYmFlPN2Q1tjvU6UfBBa8pad4gT3KPF98pcsfaYXpz-XhTYI-Q0YpBUBZ6KtlqUAZ9CnbAnT9Jd3Bx10";
+    const options = {
+        userVisibleOnly: true,
+        // if key exists, create applicationServerKey property
+        ...(key && {applicationServerKey: urlB64ToUint8Array(key)})
+    };
+
+    const sub = await reg.pushManager.subscribe(options);
+    await sendSubData(sub, token)
+};
+
+const sendSubData = async (subscription, token) => {
+    const browser = navigator.userAgent.match(/(firefox|msie|chrome|safari|trident)/ig)[0].toLowerCase();
+    const data = {
+        status_type: 'subscribe',
+        subscription: subscription.toJSON(),
+        browser: browser,
+    };
+    const config = {
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'content-type': 'application/json'
+        }
+    };
+
+    console.log(data)
+    console.log(token)
+    await axios.post('http://127.0.0.1:8000/webpush/save_information', JSON.stringify(data), config).then((res) => {
+        console.log(res)
+    })
+        .catch((e) => {
+            console.error(e);
+        });
+};
 
 const {reducer} = authSlice;
 export default reducer;

@@ -39,7 +39,7 @@ urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
-    path('webpush/', include('webpush.urls')),
+    path('webpush/', include('webpush_drf.urls')),
     path('account-confirm-email/<str:key>/', ConfirmEmailView.as_view()),
     path('register/', RegisterView.as_view()),
     path('login/google/', GoogleLogin.as_view(), name='google_login'),

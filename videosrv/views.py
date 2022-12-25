@@ -1,9 +1,12 @@
+import json
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
+from django.http.response import JsonResponse, HttpResponse
+from django.views.decorators.http import require_GET, require_POST
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView
@@ -14,6 +17,8 @@ from rest_framework import filters
 from rest_framework.generics import get_object_or_404
 from django.core.exceptions import ValidationError
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from django.views.decorators.csrf import csrf_exempt
+from webpush_drf import send_user_notification
 from dj_rest_auth.registration.views import SocialLoginView
 from .models import Profile, Video, Comment, Like
 from .serializers import ProfileSerializer, VideoSerializer, CommentSerializer, UserSerializer
@@ -216,3 +221,23 @@ class ProfileUpdateView(UpdateAPIView):
     queryset = Profile.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthorizedUserStuffOrReadOnly]
+
+
+@require_POST
+@csrf_exempt
+def send_push(request):
+    try:
+        body = request.body
+        data = json.loads(body)
+
+        if 'head' not in data or 'body' not in data or 'id' not in data:
+            return JsonResponse(status=400, data={"message": "Invalid data format"})
+
+        user_id = data['id']
+        user = get_object_or_404(Profile, pk=user_id)
+        payload = {'head': data['head'], 'body': data['body']}
+        send_user_notification(user=user, payload=payload, ttl=1000)
+
+        return JsonResponse(status=200, data={"message": "Web push successful"})
+    except TypeError:
+        return JsonResponse(status=500, data={"message": "An error occurred"})

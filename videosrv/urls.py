@@ -3,7 +3,8 @@ from rest_framework import routers
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 
 from .views import VideoViewSet, VideoByUserViewSet, SubscriptionsViewSet, CommentsViewSet, ProfileView, \
-    ProfileUpdateView, UploadViewSet, LikeView, UpdateViewSet, SubscribeView, BanView, UnSubscribeView, UnBanView
+    ProfileUpdateView, UploadViewSet, LikeView, UpdateViewSet, SubscribeView, BanView, UnSubscribeView, UnBanView, \
+    send_push
 
 router = routers.DefaultRouter()
 router.register(r'video', VideoViewSet, basename='video')
@@ -25,4 +26,5 @@ urlpatterns = [
     path('password-reset/', PasswordResetView.as_view()),
     path('password-reset-confirm/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('send_push', send_push),
 ]

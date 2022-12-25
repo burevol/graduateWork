@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     "corsheaders",
     'drf_yasg',
-    'webpush',
+    'webpush_drf',
     'videosrv',
     'messenger',
 ]
@@ -185,7 +185,13 @@ WEBPUSH_SETTINGS = {
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
