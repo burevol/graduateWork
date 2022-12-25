@@ -17,7 +17,7 @@ function AvatarField({userId}) {
                 return console.error(e.message);
             }
         } else {
-            setImg("")
+            setImg("/empty.png")
         }
     }, [userId]);
 

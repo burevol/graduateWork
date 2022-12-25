@@ -3,25 +3,24 @@ import { useSelector, useDispatch } from 'react-redux';
 import Video from './Video';
 import { fetchVideo } from "./store/videoSlice";
 
-function VideoList(props) {
+function VideoList({user, search}) {
     
     const videos = useSelector((state) => state.storageData.videos.videos);
     const {user: currentUser, isLoggedIn : isLoggedIn} = useSelector((state) => state.storageData.auth);
     const dispatch = useDispatch();
-
     useEffect(() => {
         if (isLoggedIn) {
-            dispatch(fetchVideo(currentUser.access_token));
+            dispatch(fetchVideo(currentUser.access_token, search));
         } else {
-            dispatch(fetchVideo(null));
+            dispatch(fetchVideo(null, search));
         }
-    }, [dispatch]);
-    const videoFragment = (props.user === null ?
+    }, [dispatch, search]);
+    const videoFragment = (user === null ?
         videos.map((videoCard) =>
             <Video key={videoCard.id} info={videoCard} />
         )
         :
-        videos.filter(video => video.author === parseInt(props.user)).map((videoCard) =>
+        videos.filter(video => video.author === parseInt(user)).map((videoCard) =>
             <Video key={videoCard.id} info={videoCard} />
         ));
 

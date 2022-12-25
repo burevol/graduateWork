@@ -20,6 +20,7 @@ py .\manage.py runserver
 ### Запуск фронтэнда
 
 ```
+cd ./graduate-work-frontend
 npm install
 npm start
 ```

@@ -23,7 +23,7 @@ export default videoSlice.reducer
 
 // Actions
 
-export const fetchVideo = (token) => async dispatch => {
+export const fetchVideo = (token, search) => async dispatch => {
     try {
         let config = {}
         if (token) {
@@ -33,7 +33,11 @@ export const fetchVideo = (token) => async dispatch => {
                 }
             };
         }
-        await api.get('/api/video', config)
+        let URL = '/api/video'
+        if (search) {
+            URL = `/api/video?search=${search}`
+        }
+        await api.get(URL, config)
             .then((response) => dispatch(videoSuccess(response.data)))
     } catch (e) {
         return console.error(e.message);
