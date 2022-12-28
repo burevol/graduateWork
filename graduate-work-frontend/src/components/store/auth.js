@@ -3,8 +3,9 @@ import {setMessage} from "./message";
 
 import AuthService from "../services/auth.service";
 import {api} from "../api/main_api";
-import {commentSlice} from "./commentSlice";
 import axios from "axios";
+
+const REFRESH_TOKEN = "REFRESH_TOKEN";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -72,6 +73,10 @@ export const login = createAsyncThunk(
     }
 );
 
+export const refreshToken = (accessToken) => (dispatch) => {
+    dispatch(refreshToken(accessToken));
+}
+
 export const logout = createAsyncThunk(
     "auth/logout",
     async () => {
@@ -91,6 +96,9 @@ const authSlice = createSlice({
         },
         setBanned: (state, action) => {
             state.banned = action.payload;
+        },
+        refreshToken: (state, action) => {
+            state.user.access_token = action.payload;
         }
     },
     extraReducers: (builder) => {

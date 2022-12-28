@@ -104,7 +104,7 @@ DATABASES = {
         'NAME': 'videosrv',
         'USER': 'videosrvuser',
         'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'HOST': '192.168.88.68',
         'PORT': '',
     }
 }
@@ -214,7 +214,8 @@ LOGIN_URL = 'http://localhost:8000/login'
 
 REST_USE_JWT = True
 
-JWT_AUTH_COOKIE = 'my-app-auth'
+JWT_AUTH_COOKIE = 'jwt-access-token'           # you can set these
+JWT_AUTH_REFRESH_COOKIE = 'jwt-refresh-token'  # to anything
 
 AUTH_USER_MODEL = 'videosrv.Profile'
 
@@ -226,5 +227,9 @@ CELERY_BEAT_SCHEDULE = {
     "sample_task": {
         "task": "videosrv.tasks.hello",
         "schedule": crontab(minute="*/1")
+    },
+    'send_mail': {
+        "task": "videosrv.tasks.send_messages",
+        "schedule": crontab(minute=12, hour=0)
     }
 }

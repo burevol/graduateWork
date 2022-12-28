@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import {Avatar} from "flowbite-react";
 import {api} from './api/main_api'
 
 function AvatarField({userId}) {

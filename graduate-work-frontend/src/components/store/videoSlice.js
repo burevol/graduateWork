@@ -38,7 +38,7 @@ export const fetchVideo = (token, search) => async dispatch => {
             URL = `/api/video?search=${search}`
         }
         await api.get(URL, config)
-            .then((response) => dispatch(videoSuccess(response.data)))
+            .then((response) => dispatch(videoSuccess(response.data.results)))
     } catch (e) {
         return console.error(e.message);
     }

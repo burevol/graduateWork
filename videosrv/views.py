@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -50,12 +51,19 @@ class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Gra
     adapter_class = GoogleOAuth2Adapter
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
 class VideoViewSet(viewsets.ModelViewSet):
     serializer_class = VideoSerializer
     permission_classes = [IsOwnerStuffOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['author', ]
     search_fields = ['header', 'description']
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         if self.request.user.is_authenticated:

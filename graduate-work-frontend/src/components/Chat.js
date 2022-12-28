@@ -1,22 +1,18 @@
 import {useState, useRef, useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {useParams} from 'react-router-dom';
 import MyMessage from './MyMessage';
 import OtherMessage from './OtherMessage.js';
-import {commitMessage} from './store/messages';
 
 function Chat() {
 
 
-    const dispatch = useDispatch();
     const params = useParams();
     const bottomRef = useRef(null);
-    const next_id = useSelector((state) => state.storageData.messages.max_id)
     const {user: currentUser} = useSelector((state) => state.storageData.auth);
     const [text, setText] = useState('');
     const URL = `ws://127.0.0.1:8000/ws/messenger/?token=${currentUser.access_token}`;
     const [ws, setWs] = useState(new WebSocket(URL));
-    const [message, setMessage] = useState([]);
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([])
 
@@ -56,7 +52,6 @@ function Chat() {
             const message = JSON.parse(e.data);
             switch (message.type) {
                 case 'message':
-                    console.log(message.message)
                     setMessages([...messages, message.message])
                     break;
                 case 'message_history':
@@ -65,6 +60,8 @@ function Chat() {
                 case 'users':
                     setUsers(JSON.parse(message.message))
                     break;
+                default:
+                    console.log("Неизвестный тип сообщения")
             }
         }
 
