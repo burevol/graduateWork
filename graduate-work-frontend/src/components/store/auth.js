@@ -209,8 +209,6 @@ const sendSubData = async (subscription, token) => {
         }
     };
 
-    console.log(data)
-    console.log(token)
     await axios.post('http://127.0.0.1:8000/webpush/save_information', JSON.stringify(data), config).then((res) => {
         console.log(res)
     })

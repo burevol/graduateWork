@@ -10,7 +10,6 @@ function AvatarField({userId}) {
                 api.get(`/api/user/${userId}`)
                     .then((response) => {
                         setImg(response.data.avatar)
-                        console.log(response.data.avatar)
                     })
             } catch (e) {
                 return console.error(e.message);
