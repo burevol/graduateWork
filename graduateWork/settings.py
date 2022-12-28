@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+from celery.schedules import crontab
+import videosrv.tasks
 
 import environ
 
@@ -184,6 +186,8 @@ WEBPUSH_SETTINGS = {
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
 # CORS_ORIGIN_ALLOW_ALL = True
 
@@ -216,4 +220,11 @@ AUTH_USER_MODEL = 'videosrv.Profile'
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'videosrv.serializers.ProfileSerializer',
+}
+
+CELERY_BEAT_SCHEDULE = {
+    "sample_task": {
+        "task": "videosrv.tasks.hello",
+        "schedule": crontab(minute="*/1")
+    }
 }

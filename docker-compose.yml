@@ -24,6 +24,18 @@ services:
     volumes:
       - cache:/data
 
+  celery:
+    build: .
+    container_name: 'celery_container'
+    command: celery -A graduateWork --broker redis://redis:6379 --result-backend redis://redis:6379 worker -B -E -c 8 -l debug
+    volumes:
+      - .:/code
+    links:
+      - redis
+    depends_on:
+      - db
+      - redis
+
 networks:
   postgres:
     driver: bridge

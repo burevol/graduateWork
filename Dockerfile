@@ -1,8 +1,7 @@
 # Dockerfile
-FROM python:3.7
-RUN pip install pipenv
+FROM python:3.9
 RUN mkdir /code
 WORKDIR /code
-COPY Pipfile* /code/
-RUN pipenv install --system --deploy --ignore-pipfile
-ADD core /code/
+COPY requirements2.txt /code/
+RUN pip install -r requirements2.txt
+ADD graduateWork /code/
